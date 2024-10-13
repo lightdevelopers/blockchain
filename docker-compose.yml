@@ -1,0 +1,35 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: myuser
+      DB_PASSWORD: mypassword
+      DB_DATABASE: mydatabase
+      SENDGRID_API_KEY: YOUR_API_KEY
+      MORALIS_API_KEY: YOUR_API_KEY
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
